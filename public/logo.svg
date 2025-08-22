@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="270" viewBox="0 0 620 270">
+  <!-- Keyboard body -->
+  <rect x="5" y="100" width="420" height="130" rx="12" fill="#eaeaea" stroke="#222" stroke-width="3"/>
+
+  <!-- Row 1 -->
+  <rect x="30" y="110" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="70" y="110" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="110" y="110" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="150" y="110" width="35" height="22" rx="4" fill="#0078d7"/>
+  <rect x="190" y="110" width="35" height="22" rx="4" fill="#f97316"/>
+  <rect x="230" y="110" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="270" y="110" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="310" y="110" width="60" height="22" rx="4" fill="#0078d7"/>
+
+  <!-- Row 2 -->
+  <rect x="30" y="138" width="45" height="22" rx="4" fill="#444"/>
+  <rect x="80" y="138" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="120" y="138" width="35" height="22" rx="4" fill="#f97316"/>
+  <rect x="160" y="138" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="200" y="138" width="35" height="22" rx="4" fill="#0078d7"/>
+  <rect x="240" y="138" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="280" y="138" width="90" height="22" rx="4" fill="#0078d7"/>
+
+  <!-- Row 3 -->
+  <rect x="30" y="166" width="55" height="22" rx="4" fill="#f97316"/>
+  <rect x="90" y="166" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="130" y="166" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="170" y="166" width="35" height="22" rx="4" fill="#444"/>
+  <rect x="210" y="166" width="35" height="22" rx="4" fill="#0078d7"/>
+  <rect x="250" y="166" width="120" height="22" rx="4" fill="#f97316"/>
+
+  <!-- Spacebar row -->
+  <rect x="30" y="194" width="75" height="22" rx="4" fill="#444"/>
+  <rect x="110" y="194" width="180" height="22" rx="6" fill="#0078d7"/>
+  <rect x="295" y="194" width="75" height="22" rx="4" fill="#f97316"/>
+
+  <!-- Mouse body -->
+  <ellipse cx="540" cy="165" rx="80" ry="100" fill="#fdfdfd" stroke="#222" stroke-width="3"/>
+
+  <!-- Mouse split -->
+  <line x1="540" y1="70" x2="540" y2="260" stroke="#222" stroke-width="2"/>
+
+  <!-- Scroll wheel -->
+  <rect x="537" y="120" width="6" height="28" rx="3" fill="#0078d7"/>
+
+  <!-- Cable cut (wire on top) -->
+  <path d="M540 65 C540 40, 520 20, 500 10" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M500 10 Q490 5, 480 10" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>
