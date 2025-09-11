@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Moon, Sun, Keyboard, Mouse, RotateCcw } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Moon, Sun, Keyboard, Mouse, RotateCcw, Zap, Activity, Target, Settings, Monitor, Sparkles } from "lucide-react"
 import { useTheme } from "next-themes"
 
 interface KeyPress {
@@ -21,27 +22,66 @@ interface MouseEvent {
   timestamp: number
 }
 
-const KEYBOARD_LAYOUT = [
-  ["Escape", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"],
-  ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace"],
-  ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\"],
-  ["CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"],
-  ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift"],
-  ["Ctrl", "Meta", "Alt", "Space", "Alt", "Meta", "Menu", "Ctrl"],
-]
+// Different keyboard layouts
+const KEYBOARD_LAYOUTS = {
+  full: [
+    ["Esc", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "PrintScreen", "ScrollLock", "Pause"],
+    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "Insert", "Home", "PageUp"],
+    ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\", "Delete", "End", "PageDown"],
+    ["CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"],
+    ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift", "↑"],
+    ["Ctrl", "Meta", "Alt", "Space", "Alt", "Meta", "Menu", "Ctrl", "←", "↓", "→"],
+  ],
+  "75%": [
+    ["Esc", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Delete"],
+    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "Home"],
+    ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\", "PageUp"],
+    ["CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter", "PageDown"],
+    ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift", "↑"],
+    ["Ctrl", "Meta", "Alt", "Space", "Alt", "Meta", "←", "↓", "→"],
+  ],
+  "65%": [
+    ["Esc", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "Delete"],
+    ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\"],
+    ["CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"],
+    ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift"],
+    ["Ctrl", "Meta", "Alt", "Space", "Alt", "Meta", "Ctrl"],
+  ],
+  "60%": [
+    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace"],
+    ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\"],
+    ["CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"],
+    ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift"],
+    ["Ctrl", "Meta", "Alt", "Space", "Alt", "Meta", "Ctrl"],
+  ],
+}
 
 const KEY_WIDTHS: Record<string, string> = {
-  Backspace: "w-20",
-  Tab: "w-16",
-  CapsLock: "w-20",
-  Enter: "w-20",
-  Shift: "w-24",
-  Ctrl: "w-16",
-  Alt: "w-16",
+  Backspace: "w-24",
+  Tab: "w-18",
+  CapsLock: "w-24",
+  Enter: "w-26",
+  Shift: "w-28",
+  Ctrl: "w-18",
+  Alt: "w-18",
   Meta: "w-16",
   Menu: "w-16",
   Space: "w-80",
-  Escape: "w-16",
+  Esc: "w-20",
+  Delete: "w-18",
+  Insert: "w-16",
+  Home: "w-20",
+  End: "w-16",
+  PageUp: "w-22",
+  PageDown: "w-24",
+  PrintScreen: "w-28",
+  ScrollLock: "w-24",
+  Pause: "w-18",
+  "\\": "w-16",
+  "←": "w-12",
+  "→": "w-12",
+  "↑": "w-12",
+  "↓": "w-12",
 }
 
 export function KeyboardTester() {
@@ -49,6 +89,7 @@ export function KeyboardTester() {
   const [keyHistory, setKeyHistory] = useState<KeyPress[]>([])
   const [mouseHistory, setMouseHistory] = useState<MouseEvent[]>([])
   const [activeTab, setActiveTab] = useState("both")
+  const [keyboardSize, setKeyboardSize] = useState<keyof typeof KEYBOARD_LAYOUTS>("full")
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -108,8 +149,7 @@ export function KeyboardTester() {
   }
 
   const getKeyClass = (key: string) => {
-    const baseClass =
-      "h-12 border-2 rounded-md flex items-center justify-center text-sm font-medium transition-all duration-150 select-none"
+    const baseClass = "h-12 flex items-center justify-center text-sm font-medium select-none key-instant"
     const widthClass = KEY_WIDTHS[key] || "w-12"
 
     // Convert display key to code for checking if pressed
@@ -124,17 +164,41 @@ export function KeyboardTester() {
     else if (key === "Alt") keyCode = "AltLeft"
     else if (key === "Meta") keyCode = "MetaLeft"
     else if (key === "Menu") keyCode = "ContextMenu"
-    else if (key === "Escape") keyCode = "Escape"
+    else if (key === "Esc") keyCode = "Esc"
+    else if (key === "Delete") keyCode = "Delete"
+    else if (key === "Insert") keyCode = "Insert"
+    else if (key === "Home") keyCode = "Home"
+    else if (key === "End") keyCode = "End"
+    else if (key === "PageUp") keyCode = "PageUp"
+    else if (key === "PageDown") keyCode = "PageDown"
+    else if (key === "PrintScreen") keyCode = "PrintScreen"
+    else if (key === "ScrollLock") keyCode = "ScrollLock"
+    else if (key === "Pause") keyCode = "Pause"
+    else if (key === "←") keyCode = "ArrowLeft"
+    else if (key === "→") keyCode = "ArrowRight"
+    else if (key === "↑") keyCode = "ArrowUp"
+    else if (key === "↓") keyCode = "ArrowDown"
     else if (key.startsWith("F")) keyCode = key
+    else if (key === "`") keyCode = "Backquote"
+    else if (key === "-") keyCode = "Minus"
+    else if (key === "=") keyCode = "Equal"
+    else if (key === "[") keyCode = "BracketLeft"
+    else if (key === "]") keyCode = "BracketRight"
+    else if (key === "\\") keyCode = "Backslash"
+    else if (key === ";") keyCode = "Semicolon"
+    else if (key === "'") keyCode = "Quote"
+    else if (key === ",") keyCode = "Comma"
+    else if (key === ".") keyCode = "Period"
+    else if (key === "/") keyCode = "Slash"
     else keyCode = `Key${key.toUpperCase()}`
 
     const isPressed = pressedKeys.has(keyCode) || pressedKeys.has(`${keyCode.replace("Left", "Right")}`)
 
     if (isPressed) {
-      return `${baseClass} ${widthClass} bg-primary text-primary-foreground shadow-lg scale-95 border-primary`
+      return `${baseClass} ${widthClass} key-pressed border-2 border-orange-400 rounded-[20px]`
     }
 
-    return `${baseClass} ${widthClass} bg-secondary hover:bg-accent border-border`
+    return `${baseClass} ${widthClass} glass-card text-foreground hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:border-orange-300 dark:hover:border-orange-600 btn-hover`
   }
 
   if (!mounted) {
@@ -142,98 +206,249 @@ export function KeyboardTester() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Keyboard & Mouse Tester</h1>
-            <p className="text-muted-foreground">Test your keyboard keys and mouse buttons</p>
+    <div className="min-h-screen relative">
+      <div className="relative z-10 max-w-7xl mx-auto p-4 space-y-6">
+        <header className="text-center py-8">
+          <div className="glass-card max-w-4xl mx-auto p-8">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold gradient-text mb-4">
+              Professional Hardware Tester
+            </h1>
+            <p className="text-lg md:text-xl text-foreground/80 max-w-3xl mx-auto leading-relaxed mb-6">
+              Test your keyboard and mouse with precision using our advanced, colorful interface designed for
+              professionals and enthusiasts.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Button
+                variant="outline"
+                size="lg"
+                className="glass-card btn-hover bg-orange-50 dark:bg-orange-950/20 border-orange-300 dark:border-orange-600 text-orange-700 dark:text-orange-300 hover:text-orange-700 cursor-pointer"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                {theme === "dark" ? <Sun className="h-5 w-5 mr-2" /> : <Moon className="h-5 w-5 mr-2" />}
+                {theme === "dark" ? "Light Mode" : "Dark Mode"}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="glass-card btn-hover bg-green-50 dark:bg-green-950/20 border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 hover:text-green-700 cursor-pointer"
+                onClick={clearHistory}
+              >
+                <RotateCcw className="h-5 w-5 mr-2" />
+                Clear History
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-            <Button variant="outline" onClick={clearHistory}>
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Clear
-            </Button>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card className="glass-card btn-hover border-orange-300/50 dark:border-orange-600/50">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center mb-3">
+                <div className="p-3 bg-orange-100 dark:bg-orange-900/50 rounded-[20px]">
+                  <Keyboard className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                </div>
+              </div>
+              <h3 className="font-serif font-semibold text-lg mb-1 text-foreground">Keyboard Events</h3>
+              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{keyHistory.length}</p>
+              <p className="text-sm text-muted-foreground">Keys Pressed</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card btn-hover border-green-300/50 dark:border-green-600/50">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center mb-3">
+                <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-[20px]">
+                  <Mouse className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+              <h3 className="font-serif font-semibold text-lg mb-1 text-foreground">Mouse Events</h3>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400">{mouseHistory.length}</p>
+              <p className="text-sm text-muted-foreground">Clicks Detected</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card btn-hover border-blue-300/50 dark:border-blue-600/50">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center mb-3">
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-[20px] animate-pulse">
+                  <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+              <h3 className="font-serif font-semibold text-lg mb-1 text-foreground">Active Keys</h3>
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{pressedKeys.size}</p>
+              <p className="text-sm text-muted-foreground">Currently Pressed</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card btn-hover border-orange-300/50 dark:border-orange-600/50">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center mb-3">
+                <div className="p-3 bg-orange-100 dark:bg-orange-900/50 rounded-[20px]">
+                  <Settings className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                </div>
+              </div>
+              <h3 className="font-serif font-semibold text-lg mb-1 text-foreground">Keyboard Size</h3>
+              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{keyboardSize.toUpperCase()}</p>
+              <p className="text-sm text-muted-foreground">Layout Active</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="glass-card p-6 mb-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-[20px]">
+                <Monitor className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="font-serif font-semibold text-lg text-foreground">Testing Controls</h3>
+                <p className="text-sm text-muted-foreground">Configure your testing environment</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-foreground">Keyboard Size:</label>
+                <Select
+                  value={keyboardSize}
+                  onValueChange={(value: keyof typeof KEYBOARD_LAYOUTS) => setKeyboardSize(value)}
+                >
+                  <SelectTrigger className="w-24 glass-card border-blue-300 dark:border-blue-600">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full">Full</SelectItem>
+                    <SelectItem value="75%">75%</SelectItem>
+                    <SelectItem value="65%">65%</SelectItem>
+                    <SelectItem value="60%">60%</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="both" className="flex items-center gap-2">
-              <Keyboard className="h-4 w-4" />
-              <Mouse className="h-4 w-4" />
-              Both
-            </TabsTrigger>
-            <TabsTrigger value="keyboard" className="flex items-center gap-2">
-              <Keyboard className="h-4 w-4" />
-              Keyboard
-            </TabsTrigger>
-            <TabsTrigger value="mouse" className="flex items-center gap-2">
-              <Mouse className="h-4 w-4" />
-              Mouse
-            </TabsTrigger>
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <div className="flex justify-center">
+            <TabsList className="glass-card p-2 h-auto border-blue-300 dark:border-blue-600">
+              <TabsTrigger
+                value="both"
+                className="flex items-center gap-3 px-6 py-3 text-lg font-medium data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-green-500 data-[state=active]:text-white rounded-[16px]"
+              >
+                <Keyboard className="h-8 w-8" />
+                <Mouse className="h-8 w-8" />
+                Complete Test
+              </TabsTrigger>
+              <TabsTrigger
+                value="keyboard"
+                className="flex items-center gap-3 px-6 py-3 text-lg font-medium data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-green-500 data-[state=active]:text-white rounded-[16px]"
+              >
+                <Keyboard className="h-8 w-8" />
+                Keyboard Only
+              </TabsTrigger>
+              <TabsTrigger
+                value="mouse"
+                className="flex items-center gap-3 px-6 py-3 text-lg font-medium data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-green-500 data-[state=active]:text-white rounded-[16px]"
+              >
+                <Mouse className="h-8 w-8" />
+                Mouse Only
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="both" className="space-y-6">
-            {/* Keyboard Layout */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Virtual Keyboard</CardTitle>
-                <CardDescription>Press any key on your physical keyboard to see it highlighted</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
-                  {KEYBOARD_LAYOUT.map((row, rowIndex) => (
-                    <div key={rowIndex} className="flex gap-1 justify-center">
-                      {row.map((key, keyIndex) => (
-                        <div key={`${rowIndex}-${keyIndex}`} className={getKeyClass(key)}>
-                          {key === "Space" ? "" : key}
-                        </div>
-                      ))}
+            <div className="space-y-6">
+              <Card className="glass-card border-orange-300/50 dark:border-orange-600/50">
+                <CardHeader className="text-center">
+                  <div className="flex items-center justify-center gap-3 mb-2">
+                    <div className="p-2 bg-orange-100 dark:bg-orange-900/50 rounded-[20px]">
+                      <Keyboard className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Mouse Tester */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Mouse Tester</CardTitle>
-                <CardDescription>Click anywhere in this area to test mouse buttons</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div
-                  className="h-40 bg-muted/30 rounded-lg border-2 border-dashed border-border flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
-                  onMouseDown={handleMouseDown}
-                >
-                  <p className="text-muted-foreground">Click here to test mouse buttons</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Event History */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Keyboard Events</CardTitle>
-                  <CardDescription>Last 10 key presses</CardDescription>
+                    <CardTitle className="font-serif text-2xl text-foreground">
+                      Virtual Keyboard ({keyboardSize.toUpperCase()})
+                    </CardTitle>
+                  </div>
+                  <CardDescription className="text-muted-foreground">
+                    Press any key on your physical keyboard to see it highlighted instantly
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div className="space-y-2 p-4 bg-gradient-to-br from-orange-50/30 to-green-50/30 dark:from-orange-950/20 dark:to-green-950/20 rounded-[20px] border-2 border-orange-200/30 dark:border-orange-700/30">
+                    {KEYBOARD_LAYOUTS[keyboardSize].map((row, rowIndex) => (
+                      <div key={rowIndex} className="flex gap-1">
+                        {row.map((key, keyIndex) => (
+                          <div key={`${rowIndex}-${keyIndex}`} className={getKeyClass(key)}>
+                            {key === "Space" ? "" : key}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-card border-green-300/50 dark:border-green-600/50">
+                <CardHeader className="text-center">
+                  <div className="flex items-center justify-center gap-3 mb-2">
+                    <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-[20px]">
+                      <Target className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    </div>
+                    <CardTitle className="font-serif text-2xl text-foreground">Mouse Testing</CardTitle>
+                  </div>
+                  <CardDescription className="text-muted-foreground">Click to test mouse buttons</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <div
+                    className="h-48 bg-gradient-to-br from-green-50/30 to-blue-50/30 dark:from-green-950/20 dark:to-blue-950/20 rounded-[20px] border-2 border-dashed border-green-300/50 dark:border-green-600/50 flex items-center justify-center cursor-pointer hover:bg-gradient-to-br hover:from-green-100/50 hover:to-blue-100/50 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all duration-300 group btn-hover"
+                    onMouseDown={handleMouseDown}
+                  >
+                    <div className="text-center group-hover:scale-105 transition-transform duration-300">
+                      <div className="p-4 bg-green-100 dark:bg-green-900/50 rounded-[20px] mx-auto mb-3 w-fit">
+                        <Mouse className="h-8 w-8 text-green-600 dark:text-green-400" />
+                      </div>
+                      <p className="text-lg font-medium text-green-700 dark:text-green-300 mb-1">Click Here</p>
+                      <p className="text-sm text-muted-foreground">Test all buttons</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="glass-card border-orange-300/50 dark:border-orange-600/50">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-100 dark:bg-orange-900/50 rounded-[20px]">
+                      <Zap className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                    </div>
+                    <div>
+                      <CardTitle className="font-serif text-2xl text-foreground">Keyboard Events</CardTitle>
+                      <CardDescription className="text-muted-foreground">Real-time key press detection</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
                     {keyHistory.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-4">No key presses yet</p>
+                      <div className="text-center py-12">
+                        <div className="p-4 bg-orange-100 dark:bg-orange-900/50 rounded-[20px] mx-auto mb-4 w-fit">
+                          <Keyboard className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <p className="text-muted-foreground">Press any key to start testing</p>
+                      </div>
                     ) : (
                       keyHistory.map((event, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">{event.key}</Badge>
-                            <span className="text-sm text-muted-foreground">{event.code}</span>
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50/80 to-transparent dark:from-orange-950/30 dark:to-transparent rounded-[20px] border-2 border-orange-200/30 dark:border-orange-700/30 btn-hover"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Badge
+                              variant="secondary"
+                              className="text-base px-3 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800 rounded-[16px]"
+                            >
+                              {event.key}
+                            </Badge>
+                            <span className="text-sm text-muted-foreground font-mono">{event.code}</span>
                           </div>
                           <span className="text-xs text-muted-foreground">
                             {new Date(event.timestamp).toLocaleTimeString()}
@@ -245,21 +460,41 @@ export function KeyboardTester() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card border-green-300/50 dark:border-green-600/50">
                 <CardHeader>
-                  <CardTitle>Mouse Events</CardTitle>
-                  <CardDescription>Last 10 mouse clicks</CardDescription>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-[20px]">
+                      <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <CardTitle className="font-serif text-2xl text-foreground">Mouse Events</CardTitle>
+                      <CardDescription className="text-muted-foreground">Real-time click detection</CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div className="space-y-3">
                     {mouseHistory.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-4">No mouse clicks yet</p>
+                      <div className="text-center py-12">
+                        <div className="p-4 bg-green-100 dark:bg-green-900/50 rounded-[20px] mx-auto mb-4 w-fit">
+                          <Mouse className="h-8 w-8 text-green-600 dark:text-green-400" />
+                        </div>
+                        <p className="text-muted-foreground">Click anywhere to start testing</p>
+                      </div>
                     ) : (
                       mouseHistory.map((event, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">{event.button}</Badge>
-                            <span className="text-sm text-muted-foreground">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50/80 to-transparent dark:from-green-950/30 dark:to-transparent rounded-[20px] border-2 border-green-200/30 dark:border-green-700/30 btn-hover"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Badge
+                              variant="secondary"
+                              className="text-base px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800 rounded-[16px]"
+                            >
+                              {event.button}
+                            </Badge>
+                            <span className="text-sm text-muted-foreground font-mono">
                               ({event.x}, {event.y})
                             </span>
                           </div>
@@ -276,16 +511,24 @@ export function KeyboardTester() {
           </TabsContent>
 
           <TabsContent value="keyboard" className="space-y-6">
-            {/* Keyboard Only View */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Virtual Keyboard</CardTitle>
-                <CardDescription>Press any key on your physical keyboard to see it highlighted</CardDescription>
+            <Card className="glass-card border-orange-300/50 dark:border-orange-600/50">
+              <CardHeader className="text-center">
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <div className="p-2 bg-orange-100 dark:bg-orange-900/50 rounded-[20px]">
+                    <Keyboard className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <CardTitle className="font-serif text-2xl text-foreground">
+                    Virtual Keyboard ({keyboardSize.toUpperCase()})
+                  </CardTitle>
+                </div>
+                <CardDescription className="text-lg text-muted-foreground">
+                  Press any key on your physical keyboard to see it highlighted instantly
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
-                  {KEYBOARD_LAYOUT.map((row, rowIndex) => (
-                    <div key={rowIndex} className="flex gap-1 justify-center">
+                <div className="space-y-2 p-6 bg-gradient-to-br from-orange-50/30 to-green-50/30 dark:from-orange-950/20 dark:to-green-950/20 rounded-[20px] border-2 border-orange-200/30 dark:border-orange-700/30">
+                  {KEYBOARD_LAYOUTS[keyboardSize].map((row, rowIndex) => (
+                    <div key={rowIndex} className="flex gap-1">
                       {row.map((key, keyIndex) => (
                         <div key={`${rowIndex}-${keyIndex}`} className={getKeyClass(key)}>
                           {key === "Space" ? "" : key}
@@ -297,25 +540,45 @@ export function KeyboardTester() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="glass-card border-orange-300/50 dark:border-orange-600/50">
               <CardHeader>
-                <CardTitle>Keyboard Events</CardTitle>
-                <CardDescription>Detailed key press information</CardDescription>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-100 dark:bg-orange-900/50 rounded-[20px]">
+                    <Zap className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="font-serif text-xl text-foreground">Detailed Keyboard Events</CardTitle>
+                    <CardDescription className="text-muted-foreground">
+                      Comprehensive key press information
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 max-h-80 overflow-y-auto">
+                <div className="space-y-3 max-h-96 overflow-hidden">
                   {keyHistory.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">Press any key to start testing</p>
+                    <div className="text-center py-16">
+                      <div className="p-6 bg-orange-100 dark:bg-orange-900/50 rounded-[20px] mx-auto mb-6 w-fit">
+                        <Keyboard className="h-12 w-12 text-orange-600 dark:text-orange-400" />
+                      </div>
+                      <p className="text-lg text-muted-foreground">Press any key to start testing</p>
+                    </div>
                   ) : (
                     keyHistory.map((event, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="secondary" className="text-base px-3 py-1">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50/80 to-transparent dark:from-orange-950/30 dark:to-transparent rounded-[20px] border-2 border-orange-200/30 dark:border-orange-700/30 btn-hover"
+                      >
+                        <div className="flex items-center gap-4">
+                          <Badge
+                            variant="secondary"
+                            className="text-lg px-4 py-2 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800 rounded-[16px]"
+                          >
                             {event.key}
                           </Badge>
                           <div className="text-sm">
-                            <div className="font-medium">Key: {event.key}</div>
-                            <div className="text-muted-foreground">Code: {event.code}</div>
+                            <div className="font-medium text-foreground">Key: {event.key}</div>
+                            <div className="text-muted-foreground font-mono">Code: {event.code}</div>
                           </div>
                         </div>
                         <span className="text-sm text-muted-foreground">
@@ -330,45 +593,75 @@ export function KeyboardTester() {
           </TabsContent>
 
           <TabsContent value="mouse" className="space-y-6">
-            {/* Mouse Only View */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Mouse Tester</CardTitle>
-                <CardDescription>Click anywhere in the testing area below</CardDescription>
+            <Card className="glass-card border-green-300/50 dark:border-green-600/50">
+              <CardHeader className="text-center">
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-[20px]">
+                    <Target className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <CardTitle className="font-serif text-2xl text-foreground">Mouse Testing Zone</CardTitle>
+                </div>
+                <CardDescription className="text-lg text-muted-foreground">
+                  Click anywhere in the testing area below to verify all mouse buttons
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div
-                  className="h-60 bg-muted/30 rounded-lg border-2 border-dashed border-border flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
+                  className="h-64 bg-gradient-to-br from-green-50/30 to-blue-50/30 dark:from-green-950/20 dark:to-blue-950/20 rounded-[20px] border-2 border-dashed border-green-300/50 dark:border-green-600/50 flex items-center justify-center cursor-pointer hover:bg-gradient-to-br hover:from-green-100/50 hover:to-blue-100/50 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all duration-300 group btn-hover"
                   onMouseDown={handleMouseDown}
                 >
-                  <div className="text-center">
-                    <Mouse className="h-12 w-12 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-muted-foreground">Click here to test mouse buttons</p>
-                    <p className="text-sm text-muted-foreground mt-1">Try left, right, and middle clicks</p>
+                  <div className="text-center group-hover:scale-105 transition-transform duration-300">
+                    <div className="p-6 bg-green-100 dark:bg-green-900/50 rounded-[20px] mx-auto mb-6 w-fit">
+                      <Mouse className="h-12 w-12 text-green-600 dark:text-green-400" />
+                    </div>
+                    <p className="text-xl font-medium text-green-700 dark:text-green-300 mb-2">
+                      Click here to test mouse buttons
+                    </p>
+                    <p className="text-base text-muted-foreground">Try left, right, and middle clicks</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="glass-card border-green-300/50 dark:border-green-600/50">
               <CardHeader>
-                <CardTitle>Mouse Events</CardTitle>
-                <CardDescription>Detailed mouse click information</CardDescription>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-[20px]">
+                    <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="font-serif text-xl text-foreground">Detailed Mouse Events</CardTitle>
+                    <CardDescription className="text-muted-foreground">
+                      Comprehensive mouse click information
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 max-h-80 overflow-y-auto">
+                <div className="space-y-3 max-h-96 overflow-hidden">
                   {mouseHistory.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">Click anywhere to start testing</p>
+                    <div className="text-center py-16">
+                      <div className="p-6 bg-green-100 dark:bg-green-900/50 rounded-[20px] mx-auto mb-6 w-fit">
+                        <Mouse className="h-12 w-12 text-green-600 dark:text-green-400" />
+                      </div>
+                      <p className="text-lg text-muted-foreground">Click anywhere to start testing</p>
+                    </div>
                   ) : (
                     mouseHistory.map((event, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="secondary" className="text-base px-3 py-1">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50/80 to-transparent dark:from-green-950/30 dark:to-transparent rounded-[20px] border-2 border-green-200/30 dark:border-green-700/30 btn-hover"
+                      >
+                        <div className="flex items-center gap-4">
+                          <Badge
+                            variant="secondary"
+                            className="text-lg px-4 py-2 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800 rounded-[16px]"
+                          >
                             {event.button}
                           </Badge>
                           <div className="text-sm">
-                            <div className="font-medium">Button: {event.button}</div>
-                            <div className="text-muted-foreground">
+                            <div className="font-medium text-foreground">Button: {event.button}</div>
+                            <div className="text-muted-foreground font-mono">
                               Position: ({event.x}, {event.y})
                             </div>
                           </div>
@@ -385,10 +678,62 @@ export function KeyboardTester() {
           </TabsContent>
         </Tabs>
 
-        {/* Footer */}
-        <footer className="text-center text-sm text-muted-foreground border-t pt-6">
-          <p className="mt-1">Test your hardware with confidence.</p>
-          <p className="mt-2">© 2025 Keyboard & Mouse Tester. Built with Next.js and Tailwind CSS. </p>
+        <footer className="mt-16">
+          <div className="glass-card p-8">
+            <div className="text-center space-y-6">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="p-3 bg-gradient-to-br from-orange-100 to-green-100 dark:from-orange-900/50 dark:to-green-900/50 rounded-[20px] animate-float">
+                  <Keyboard className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+                </div>
+                <div
+                  className="p-3 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/50 dark:to-blue-900/50 rounded-[20px] animate-float"
+                  style={{ animationDelay: "1s" }}
+                >
+                  <Mouse className="h-8 w-8 text-green-600 dark:text-green-400" />
+                </div>
+                <div
+                  className="p-3 bg-gradient-to-br from-blue-100 to-orange-100 dark:from-blue-900/50 dark:to-orange-900/50 rounded-[20px] animate-float"
+                  style={{ animationDelay: "2s" }}
+                >
+                  <Sparkles className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+              <h3 className="font-serif text-2xl font-bold gradient-text">Professional Hardware Tester</h3>
+              <div className="max-w-2xl mx-auto space-y-3">
+                <p className="text-foreground/80 text-lg">
+                  The ultimate testing solution for keyboards and mice, designed with precision and modern aesthetics.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                    Real-time Testing
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <div
+                      className="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                      style={{ animationDelay: "0.5s" }}
+                    ></div>
+                    Multiple Layouts
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <div
+                      className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
+                      style={{ animationDelay: "1s" }}
+                    ></div>
+                    Professional Grade
+                  </span>
+                </div>
+              </div>
+              <div className="border-t border-border pt-6">
+                <p className="text-muted-foreground text-sm">
+                  © 2024 Professional Hardware Tester. Built with Next.js, TypeScript, and Tailwind CSS.
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-2">
+                  Engineered for professionals, enthusiasts, and anyone who demands precision in hardware testing.
+                </p>
+              </div>
+            </div>
+          </div>
         </footer>
       </div>
     </div>
