@@ -36,12 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Keyboard & Mouse Tester by Dhruv Akbari",
     description: "Test your keyboard keys and mouse buttons online with real-time visual feedback. Built by Dhruv Akbari.",
-  },
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+  }
 };
 
 

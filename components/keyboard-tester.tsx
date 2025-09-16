@@ -38,7 +38,7 @@ const KEYBOARD_LAYOUTS = {
     ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\", "PageUp"],
     ["CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter", "PageDown"],
     ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift", "↑"],
-    ["Ctrl", "Meta", "Alt", "Space", "Alt", "Meta", "←", "↓", "→"],
+    ["Ctrl", "Meta", "Alt", "Space", "Alt", "Meta","Ctrl", "←", "↓", "→"],
   ],
   "65%": [
     ["Esc", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "Delete"],
@@ -57,31 +57,31 @@ const KEYBOARD_LAYOUTS = {
 }
 
 const KEY_WIDTHS: Record<string, string> = {
-  Backspace: "w-24",
-  Tab: "w-18",
-  CapsLock: "w-24",
-  Enter: "w-26",
-  Shift: "w-28",
-  Ctrl: "w-18",
-  Alt: "w-18",
-  Meta: "w-16",
-  Menu: "w-16",
-  Space: "w-80",
-  Esc: "w-20",
-  Delete: "w-18",
-  Insert: "w-16",
-  Home: "w-20",
-  End: "w-16",
-  PageUp: "w-22",
-  PageDown: "w-24",
-  PrintScreen: "w-28",
-  ScrollLock: "w-24",
-  Pause: "w-18",
-  "\\": "w-16",
-  "←": "w-12",
-  "→": "w-12",
-  "↑": "w-12",
-  "↓": "w-12",
+  Backspace:"px-4",
+  Tab:"px-6",
+  CapsLock:"px-4",
+  Enter:"px-9",
+  Shift:"px-12",
+  Ctrl:"px-6",
+  Alt:"px-4",
+  Meta:"px-4",
+  Menu:"px-4",
+  Space:"px-38",
+  Esc:"px-3",
+  Delete:"px-4",
+  Insert:"px-4",
+  Home:"px-4",
+  End:"px-4",
+  PageUp:"px-4",
+  PageDown:"px-4",
+  PrintScreen:"px-4",
+  ScrollLock:"px-4",
+  Pause:"px-4",
+  "\\":"px-8",
+  "←":"px-6",
+  "→":"px-6",
+  "↑":"px-6",
+  "↓":"px-6",
 }
 
 export function KeyboardTester() {
@@ -150,7 +150,7 @@ export function KeyboardTester() {
 
   const getKeyClass = (key: string) => {
     const baseClass = "h-12 flex items-center justify-center text-sm font-medium select-none key-instant"
-    const widthClass = KEY_WIDTHS[key] || "w-12"
+    const widthClass = KEY_WIDTHS[key] ||"px-5"
 
     // Convert display key to code for checking if pressed
     let keyCode = ""
