@@ -16,44 +16,82 @@ const dmSans = DM_Sans({
   variable: "--font-dm-sans",
 })
 
+import type { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "Keyboard & Mouse Tester by Dhruv Akbari - Test Your Hardware Online",
+  title: {
+    default: "Keyboard Tester & Mouse Test Online | Dhruv Akbari",
+    template: "%s | Keyboard Tester by Dhruv Akbari",
+  },
   description:
-    "Use Dhruv Akbari's free online keyboard and mouse tester to check every key and button in real time. Ensure your hardware is functioning perfectly with instant feedback.",
+    "Free online keyboard and mouse tester by Dhruv Akbari. Test all keyboard keys and mouse buttons instantly with real-time visual feedback. Fast, accurate, and easy to use.",
   keywords: [
     "Dhruv Akbari",
     "keyboard tester",
+    "keyboard tester online",
     "mouse tester",
-    "test keyboard online",
-    "key checker",
-    "button test",
-    "hardware test",
-    "keyboard test tool",
-    "check keyboard keys",
-    "online key test",
+    "keyboard test",
+    "test keyboard keys",
+    "online keyboard test",
+    "key tester",
+    "keyboard checker",
+    "mouse button test",
+    "hardware tester",
+    "keyboard testing website",
+    "keyboard tester by Dhruv Akbari",
   ],
-  authors: [{ name: "Dhruv Akbari" }],
+  authors: [{ name: "Dhruv Akbari", url: "https://keyboard-tester-teal.vercel.app/" }],
   creator: "Dhruv Akbari",
   publisher: "Dhruv Akbari",
-  robots: "index, follow",
+  applicationName: "Keyboard & Mouse Tester",
+  category: "Technology",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://keyboard-tester-teal.vercel.app/",
+  },
   openGraph: {
-    title: "Keyboard & Mouse Tester by Dhruv Akbari",
+    title: "Keyboard Tester & Mouse Test Online | Dhruv Akbari",
     description:
-      "Test your keyboard keys and mouse buttons online with real-time visual feedback. Built by Dhruv Akbari.",
+      "Test your keyboard keys and mouse buttons online with instant real-time feedback. Built by Dhruv Akbari.",
+    url: "https://keyboard-tester-teal.vercel.app/",
+    siteName: "Keyboard Tester by Dhruv Akbari",
     type: "website",
     locale: "en_US",
-    url: "https://keyboard-tester-teal.vercel.app/", // Replace with actual URL
+    images: [
+      {
+        url: "/image.png", // add this image for better sharing
+        width: 1200,
+        height: 630,
+        alt: "Keyboard Tester by Dhruv Akbari",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Keyboard & Mouse Tester by Dhruv Akbari",
+    title: "Keyboard Tester & Mouse Test Online | Dhruv Akbari",
     description:
-      "Test your keyboard keys and mouse buttons online with real-time visual feedback. Built by Dhruv Akbari.",
+      "Free online keyboard and mouse tester with real-time feedback. Built by Dhruv Akbari.",
+    creator: "@DhruvAkbari", // optional if you have one
+    images: ["/image.png"],
   },
   icons: {
-    icon: "/favicon.png", // Corrected this path
+    icon: "/favicon.png",
+  },
+  verification: {
+    google: "M71tdDiU-O499RIu-uqiDLBLkJAVh67t9e107tz2UVk",
   },
 };
+
 
 
 
